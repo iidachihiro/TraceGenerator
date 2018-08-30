@@ -14,6 +14,8 @@ public class Main {
     private static int traceSize; // actual size is +1
     private static boolean setting;
     
+    private static String processName;
+    
     static List<State> states = new ArrayList<>();
     
     public static void main(String[] args) {
@@ -25,7 +27,7 @@ public class Main {
             readProbabilityConfigurationFile();
         }
 
-        Generator generator = new Generator(states, traceSize, basePath);
+        Generator generator = new Generator(states, traceSize, basePath, processName);
         generator.generate();
     }
     
@@ -88,16 +90,15 @@ public class Main {
     
     public static void readTransitionFile() {
         File file = new File(transitionFileName);
-        String processName = null;
         int stateNum = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
-            while ((line = br.readLine()) != null && !line.equals("Process:")) {}
-            processName = br.readLine();
-            while ((line = br.readLine()) != null && !line.equals("States:")) {}
-            stateNum = Integer.parseInt(br.readLine());
-            while ((line = br.readLine()) != null && !line.equals("Transitions:")) {}
+            while ((line = removeSpace(br.readLine())) != null && !line.equals("Process:")) {}
+            processName = removeSpace(br.readLine());
+            while ((line = removeSpace(br.readLine())) != null && !line.equals("States:")) {}
+            stateNum = Integer.parseInt(removeSpace(br.readLine()));
+            while ((line = removeSpace(br.readLine())) != null && !line.equals("Transitions:")) {}
             br.readLine(); // [processName = Q0,] is omitted.
             
             while ((line = br.readLine()) != null) {
