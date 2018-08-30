@@ -46,6 +46,8 @@ $ mkdir output
 
 ## Run
 ```
+$ mkdir bin
+$ javac src/* -d bin
 $ cd TraceGenerator/bin
 $ java Main
 ```
