@@ -20,7 +20,3 @@ Q11	= (putsuccess -> Q6
   |putfail -> Q9),
 Q12	= (move.e -> Q2),
 Q13	= (arrive.m -> Q1).
-
-
-
-
