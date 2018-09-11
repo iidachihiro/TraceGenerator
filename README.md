@@ -1,5 +1,4 @@
 # TraceGenerator
-====
 
 ## Description
 MTSA出力の環境モデルからトレースを自動生成するツールです。 <br>
@@ -26,7 +25,7 @@ $ mkdir output
   ```
   PreState,Action,PostState,Probability
   ```
-  * 設定ファイル(generation.config)
+  * 設定ファイル(generator.config)
   ```
   Transition File Name =
 	     sample_envModel.txt
@@ -45,9 +44,22 @@ $ mkdir output
 ``output``ディレクトリには生成された``Traces.txt``が出力されます。
 
 ## Run
+まずコンパイルして下さい。
 ```
 $ mkdir bin
 $ javac src/* -d bin
 $ cd TraceGenerator/bin
-$ java Main
+```
+
+### Prepare
+上記の遷移確率表のファイルを``resources``に自動生成します。 <br>
+ファイル名は``generator.config``の``Probability File Name``に設定した名前になります。
+```
+$ java Main prepare
+```
+
+### Generate
+トレースを生成します。
+```
+$ java Main generate
 ```
