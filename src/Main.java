@@ -1,13 +1,16 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     private static String basePath;
-    private static String configFileName = "generation.config";
+    private static String configFileName = "generator.config";
     
     private static String transitionFileName;
     private static String probFileName;
@@ -18,17 +21,35 @@ public class Main {
     
     static List<State> states = new ArrayList<>();
     
+    private static String tab = "  ";
+    
     public static void main(String[] args) {
-        setConfig();
-        
-        readTransitionFile();
-        
-        if (setting) {
-            readProbabilityConfigurationFile();
+        if (args.length == 0) {
+            System.out.println("Please input the mode.");
+            printPartition();
+            System.out.println("[prepare]"+tab+"prepare the transition probability file.");
+            System.out.println("[generate]"+tab+"generate the trace.");
+            printPartition();
+            return;
         }
+        if (args[0].equals("generate")) {
+            setConfig();
+            
+            readTransitionFile();
+            
+            if (setting) {
+                readProbabilityConfigurationFile();
+            }
 
-        Generator generator = new Generator(states, traceSize, basePath, processName);
-        generator.generate();
+            Generator generator = new Generator(states, traceSize, basePath, processName);
+            generator.generate();
+        } else if (args[0].equals("prepare")) {
+            setConfig();
+            
+            readTransitionFile();
+            
+            generateProbabilityCSV();
+        }
     }
     
     private static void setConfig() {
@@ -56,7 +77,7 @@ public class Main {
         printConfig();
     }
 
-    public static void readProbabilityConfigurationFile() {
+    private static void readProbabilityConfigurationFile() {
         File file = new File(probFileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -125,7 +146,7 @@ public class Main {
         }
         System.out.println("Read transition file.");
         printPartition();
-        System.out.println("processName: "+processName);
+        System.out.println("processName: "+processName);    
         System.out.println("stateNum: "+stateNum);
         printPartition();
     }
@@ -197,5 +218,22 @@ public class Main {
         System.out.println("Trace Size = "+traceSize);
         System.out.println("Probability Setting = "+setting);
         printPartition();
+    }
+    
+    private static void generateProbabilityCSV() {
+        try {
+            File file = new File(probFileName);
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+            for (State state : states) {
+                for (Transition transition : state.getTransitions()) {
+                    pw.println(state.getName()+","+transition.getAction()+","+transition.getPostState()+","+transition.getProbability());
+                }
+            }
+            pw.close();
+        } catch (IOException e) {
+            System.err.println(e.toString());
+        }
+        System.out.println("Generate "+probFileName+".");
+        System.out.println("Please set probability of each transition.");
     }
 }

@@ -20,19 +20,37 @@ public class Generator {
     
     public void generate() {
         File file = new File(this.traceFilePath);
+        int i = 0;
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-            String curStateName = this.states.get(0).getTransitions().get(0).getPostState();
-            for (int i = 0; i <= this.traceSize; i++) {
+            Transition firstTransition;
+            String curStateName;
+            while (true) {
+                firstTransition = this.states.get(0).getTransitionAtRandom();
+                curStateName = firstTransition.getPostState();
+                if (!curStateName.equals("ERROR")) {
+                    pw.println(firstTransition.getAction());
+                    break;
+                }
+            }
+            for (i = 0; i < this.traceSize; i++) {
                 State curState = this.states.get(Integer.parseInt(curStateName.substring(1))); // "Q" is omitted from state name
                 Transition transition = curState.getTransitionAtRandom();
                 pw.println(transition.getAction());
-                curStateName = transition.getPostState();
+                if ((curStateName = transition.getPostState()).equals("ERROR")) {
+                    pw.println("ERROR");
+                    break;
+                }
             }
             pw.close();
         } catch (IOException e) {
             System.err.println(e.toString());
         }
-        System.out.println("Generated "+this.traceFileName+" file.");
+        if (i == this.traceSize) {
+            System.out.println("Generated "+this.traceFileName+" file.");
+        } else {
+            System.out.println("Generated "+this.traceFileName+" file, but ERROR is caused in Traces.");
+            System.out.println("Trace size is "+(i+2)+".");
+        }
     }
 }
