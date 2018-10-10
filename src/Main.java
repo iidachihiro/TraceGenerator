@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Main {
     private static String basePath;
+    private static String resourcesPath;
     private static String configFileName = "generator.config";
     
     private static String transitionFileName;
@@ -49,32 +50,39 @@ public class Main {
             readTransitionFile();
             
             generateProbabilityCSV();
+        } else if (args[0].equals("generateEX1")) {
+            setConfig();
+            readTransitionFile();
+            ProbabilityConfigurationFile pcf = new ProbabilityConfigurationFile(probFileName);
+            pcf.read();
+            Generator generator = new Generator(states, traceSize, basePath, processName);
+            generator.generate(pcf);
         }
     }
     
     private static void setConfig() {
-        basePath = System.getProperty("user.dir");
-        basePath = basePath.substring(0, basePath.length()-3); // "bin" is omitted.
-        File file = new File(basePath+"resources/"+configFileName);
+        basePath = System.getProperty("user.dir")+"/";
+        resourcesPath = basePath+"resources/";
+        File file = new File(resourcesPath+configFileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.contains("Transition File Name")) 
-                    transitionFileName = basePath+"resources/"+removeSpace(br.readLine());
+                    transitionFileName = resourcesPath+removeSpace(br.readLine());
                 else if (line.contains("Probability File Name"))
-                    probFileName = basePath+"resources/"+removeSpace(br.readLine());
+                    probFileName = resourcesPath+removeSpace(br.readLine());
                 else if (line.contains("Trace Size"))
                     traceSize = Integer.parseInt(removeSpace(br.readLine()));
                 else if (line.contains("Probability Setting"))
                     setting = Boolean.parseBoolean(removeSpace(br.readLine()));
             }
             br.close();
+            System.out.println("Read config file.");
+            printConfig();
         } catch (IOException e) {
             System.err.println(e.toString());
         }
-        System.out.println("Read config file.");
-        printConfig();
     }
 
     private static void readProbabilityConfigurationFile() {
@@ -87,11 +95,11 @@ public class Main {
                 if (line.length() == 0) {
                     continue;
                 }
-                String[] str = line.split(",", 0);
-                String preStateName = str[0];
-                String action = str[1];
-                String postStateName = str[2];
-                Double probability = Double.parseDouble(str[3]);
+                String[] strs = line.split(",", 0);
+                String preStateName = strs[0];
+                String action = strs[1];
+                String postStateName = strs[2];
+                Double probability = Double.parseDouble(strs[3]);
                 State state = states.get(Integer.parseInt(preStateName.substring(1)));
                 for (Transition transition : state.getTransitions()) {
                     if (transition.isSameActionAndPostState(new Transition(action, postStateName))) {
@@ -103,10 +111,10 @@ public class Main {
             for (State state : states) {
                 state.normalizeProbabilities();
             }
+            System.out.println("Read probability file.");
         } catch (IOException e) {
             System.err.println(e.toString());
         }
-        System.out.println("Read probability file.");
     }
     
     public static void readTransitionFile() {
@@ -141,14 +149,14 @@ public class Main {
                 states.add(state);
             }
             br.close();
+            System.out.println("Read transition file.");
+            printPartition();
+            System.out.println("processName: "+processName);    
+            System.out.println("stateNum: "+stateNum);
+            printPartition();
         } catch (IOException e) {
             System.err.println(e.toString());
         }
-        System.out.println("Read transition file.");
-        printPartition();
-        System.out.println("processName: "+processName);    
-        System.out.println("stateNum: "+stateNum);
-        printPartition();
     }
     
     private static String removeSpace(String line) {

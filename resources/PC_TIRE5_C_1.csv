@@ -5,12 +5,12 @@ Q3,pickup,Q7,1
 Q4,arrive.w,Q6,1
 Q5,arrive.w,Q9,1
 Q6,move.e,Q8,1
-Q7,pickupfail,Q3,0.01
-Q7,pickupsuccess,Q10,0.99
+Q7,pickupfail,Q3,0
+Q7,pickupsuccess,Q10,1
 Q8,arrive.m,Q12,1
 Q9,putdown,Q11,1
 Q10,move.w,Q13,1
-Q11,putsuccess,Q6,0.99
-Q11,putfail,Q9,0.01
+Q11,putsuccess,Q6,1
+Q11,putfail,Q9,0
 Q12,move.e,Q2,1
 Q13,arrive.m,Q1,1
