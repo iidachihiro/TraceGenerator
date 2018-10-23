@@ -63,3 +63,17 @@ $ java Main prepare
 ```
 $ java Main generate
 ```
+
+### 自分用
+実験1
+- 環境変化を数段階で設定可能
+```
+$ java -cp bin Main generateEx1
+```
+
+確率ファイルの構成を変更
+1つの確率ファイルだけで、遷移確率を何回でも指定位置で変更できるようにした。
+,,,N1,N2,...
+Q0,act0,Q1,p11,p12,...
+Q1,act1,Q2,p21,p22,...
+Q2,act2,Q3,p31,p32,...
