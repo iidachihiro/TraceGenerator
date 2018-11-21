@@ -1,0 +1,23 @@
+Process:
+TIRE5_C_v5
+States:
+14
+Transitions:
+TIRE5_C = Q0,
+Q0	= (start -> Q4),
+Q1	= (move.w -> Q5),
+Q2	= (arrive.e -> Q3
+  |arrive.m -> Q12),
+Q3	= (pickup -> Q7),
+Q4	= (arrive.w -> Q6),
+Q5	= (arrive.w -> Q9),
+Q6	= (move.e -> Q8),
+Q7	= (pickupfail -> Q3
+  |pickupsuccess -> Q10),
+Q8	= (arrive.m -> Q12),
+Q9	= (putdown -> Q11),
+Q10	= (move.w -> Q13),
+Q11	= (putsuccess -> Q6
+  |putfail -> Q9),
+Q12	= (move.e -> Q2),
+Q13	= (arrive.m -> Q1).
